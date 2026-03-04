@@ -376,6 +376,9 @@ namespace GatherBuddy.AutoGather
                             break;
                     }
                 if (IsPathing) RemovePassedWaypoints(path);
+                var smoothingDensity = Math.Max(0.0f, GatherBuddy.Config.AutoGatherConfig.PathSmoothingDensity);
+                var smoothingMinSegments = Math.Max(1, GatherBuddy.Config.AutoGatherConfig.PathSmoothingMinSegments);
+                path = SmoothPath(path, smoothingDensity, smoothingMinSegments);
                 VNavmesh.Path.Stop();
                 VNavmesh.Path.MoveTo(path, _navState.flying && !_navState.mountingUp);
                 GatherBuddy.Log.Debug($"VNavmesh started moving via {pathtype} path, {path.Count} waypoints.");
@@ -398,6 +401,111 @@ namespace GatherBuddy.AutoGather
                 }
                 path.RemoveRange(0, n);
             }
+        }
+
+        private static List<Vector3> SmoothPath(List<Vector3> nodes, float pointsPerUnit = 0.25f, int minSegments = 2, float epsilon = 1e-4f, float alpha = 0.5f)
+        {
+            if (nodes.Count < 2)
+                return nodes;
+
+            var points = new List<Vector3>(nodes.Count);
+            Vector3? previous = null;
+            foreach (var node in nodes)
+            {
+                if (previous is null || !Near(node, previous.Value, epsilon))
+                {
+                    points.Add(node);
+                    previous = node;
+                }
+            }
+
+            if (points.Count < 2)
+                return points;
+
+            if (points.Count == 2)
+            {
+                var p1 = points[0];
+                var p2 = points[1];
+                var segLen = Vector3.Distance(p1, p2);
+                var segments = Math.Max(minSegments, (int)MathF.Ceiling(segLen * pointsPerUnit));
+
+                var twoPointOutput = new List<Vector3>(segments + 1) { p1 };
+                for (var j = 1; j <= segments; j++)
+                {
+                    var u = j / (float)segments;
+                    twoPointOutput.Add(Vector3.Lerp(p1, p2, u));
+                }
+
+                return twoPointOutput;
+            }
+
+            var smoothed = new List<Vector3>(points.Count * 4) { points[0] };
+
+            for (var i = 0; i < points.Count - 1; i++)
+            {
+                var p0 = i > 0 ? points[i - 1] : points[i];
+                var p1 = points[i];
+                var p2 = points[i + 1];
+                var p3 = i + 2 < points.Count ? points[i + 2] : points[i + 1];
+
+                var t0 = 0f;
+                var t1 = GetT(t0, p0, p1, epsilon, alpha);
+                var t2 = GetT(t1, p1, p2, epsilon, alpha);
+                var t3 = GetT(t2, p2, p3, epsilon, alpha);
+
+                var segLen = MathF.Max(Vector3.Distance(p1, p2), epsilon);
+                var segments = Math.Max(minSegments, (int)MathF.Ceiling(segLen * pointsPerUnit));
+
+                for (var j = 1; j <= segments; j++)
+                {
+                    var t = t1 + (t2 - t1) * (j / (float)segments);
+
+                    float d10 = t1 - t0, d21 = t2 - t1, d32 = t3 - t2, d20 = t2 - t0, d31 = t3 - t1;
+                    var degenerate = d10 < epsilon || d21 < epsilon || d32 < epsilon || d20 < epsilon || d31 < epsilon;
+                    if (degenerate)
+                    {
+                        var u = (t - t1) / MathF.Max(t2 - t1, epsilon);
+                        smoothed.Add(Vector3.Lerp(p1, p2, u));
+                        continue;
+                    }
+
+                    var a1 = (t1 - t) / d10 * p0 + (t - t0) / d10 * p1;
+                    var a2 = (t2 - t) / d21 * p1 + (t - t1) / d21 * p2;
+                    var a3 = (t3 - t) / d32 * p2 + (t - t2) / d32 * p3;
+
+                    var b1 = (t2 - t) / d20 * a1 + (t - t0) / d20 * a2;
+                    var b2 = (t3 - t) / d31 * a2 + (t - t1) / d31 * a3;
+
+                    var d21b = t2 - t1;
+                    if (d21b < epsilon)
+                    {
+                        var u = (t - t1) / MathF.Max(t2 - t1, epsilon);
+                        smoothed.Add(Vector3.Lerp(p1, p2, u));
+                    }
+                    else
+                    {
+                        var c = (t2 - t) / d21b * b1 + (t - t1) / d21b * b2;
+                        smoothed.Add(c);
+                    }
+                }
+            }
+
+            if (!Near(smoothed[^1], points[^1], epsilon))
+                smoothed.Add(points[^1]);
+
+            return smoothed;
+
+            static float GetT(float t, Vector3 p0, Vector3 p1, float eps, float tension)
+            {
+                var d = Vector3.Distance(p0, p1);
+                if (d < eps)
+                    d = eps;
+
+                return t + MathF.Pow(d, tension);
+            }
+
+            static bool Near(Vector3 a, Vector3 b, float eps)
+                => Vector3.DistanceSquared(a, b) <= eps * eps;
         }
 
         private unsafe void Dismount()
@@ -479,7 +587,7 @@ namespace GatherBuddy.AutoGather
                 && nodeId.HasValue 
                 && AutoOffsets.TryGetRandomOffset(nodeId.Value, destination, player, out var offset))
             {
-                GatherBuddy.Log.Debug($"Using auto-offset for node {nodeId.Value}: {offset}. Distance to node: {Vector2.Distance(offset.ToVector2(), destination.ToVector2()):F2}y, angle: {Math.Acos(Vector2.Dot(Vector2.Normalize((player - destination).ToVector2()), Vector2.Normalize((offset - destination).ToVector2()))) * 180.0 / Math.PI:F1}°");
+                GatherBuddy.Log.Debug($"Using auto-offset for node {nodeId.Value}: {offset}. Distance to node: {Vector2.Distance(offset.ToVector2(), destination.ToVector2()):F2}y, angle: {Math.Acos(Vector2.Dot(Vector2.Normalize((player - destination).ToVector2()), Vector2.Normalize((offset - destination).ToVector2()))) * 180.0 / Math.PI:F1}Â°");
                 return offset;
             }
 

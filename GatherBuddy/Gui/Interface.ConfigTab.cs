@@ -309,6 +309,39 @@ public partial class Interface
             );
         }
 
+        public static void DrawPathSmoothingDensity()
+        {
+            ImGui.SetNextItemWidth(150);
+            var tmp = GatherBuddy.Config.AutoGatherConfig.PathSmoothingDensity;
+            if (ImGui.DragFloat("Path Smoothing Density", ref tmp, 0.01f, 0.0f, 2.0f))
+            {
+                GatherBuddy.Config.AutoGatherConfig.PathSmoothingDensity = Math.Max(0.0f, tmp);
+                GatherBuddy.Config.Save();
+            }
+
+            ImGuiUtil.HoverTooltip(
+                "How many intermediate waypoints to add per yalm when smoothing paths.\n\n" +
+                "Higher values make movement smoother but can add many points.\n" +
+                "Set to 0 to disable interpolation."
+            );
+        }
+
+        public static void DrawPathSmoothingMinSegments()
+        {
+            ImGui.SetNextItemWidth(150);
+            var tmp = GatherBuddy.Config.AutoGatherConfig.PathSmoothingMinSegments;
+            if (ImGui.DragInt("Path Smoothing Min Segments", ref tmp, 1, 1, 20))
+            {
+                GatherBuddy.Config.AutoGatherConfig.PathSmoothingMinSegments = Math.Max(1, tmp);
+                GatherBuddy.Config.Save();
+            }
+
+            ImGuiUtil.HoverTooltip(
+                "Minimum number of line segments generated per path segment while smoothing.\n\n" +
+                "Higher values force denser waypoint output even on short segments."
+            );
+        }
+
         public static void DrawMoveWhileMounting()
             => DrawCheckbox("Move while mounting up",
                 "Begin pathfinding to the next node while summoning a mount",
@@ -1600,6 +1633,8 @@ public partial class Interface
                 AutoGatherUI.DrawMountSelector();
                 ConfigFunctions.DrawMountUpDistance();
                 ConfigFunctions.DrawLandingDistance();
+                ConfigFunctions.DrawPathSmoothingDensity();
+                ConfigFunctions.DrawPathSmoothingMinSegments();
                 ConfigFunctions.DrawMoveWhileMounting();
                 ConfigFunctions.DrawHonkModeBox();
                 if (GatherBuddy.Config.AutoGatherConfig.HonkMode)

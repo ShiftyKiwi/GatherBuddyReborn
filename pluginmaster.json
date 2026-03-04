@@ -1,0 +1,33 @@
+[
+  {
+    "Author": "The Combat Reborn Team",
+    "Name": "GatherBuddy Reborn",
+    "InternalName": "GatherbuddyReborn",
+    "AssemblyVersion": "7.2.2.5",
+    "RepoUrl": "https://github.com/ShiftyKiwi/GatherBuddyReborn",
+    "ApplicableVersion": "any",
+    "DalamudApiLevel": 14,
+    "Tags": [
+      "Gathering",
+      "Fishing",
+      "Mining",
+      "Botany",
+      "Weather",
+      "Alarms",
+      "Automatic",
+      "Forager"
+    ],
+    "CategoryTags": [
+      "Jobs",
+      "Utility"
+    ],
+    "IsHide": false,
+    "IsTestingExclusive": false,
+    "DownloadLinkInstall": "https://github.com/ShiftyKiwi/GatherBuddyReborn/releases/latest/download/GatherbuddyReborn.zip",
+    "DownloadLinkUpdate": "https://github.com/ShiftyKiwi/GatherBuddyReborn/releases/latest/download/GatherbuddyReborn.zip",
+    "DownloadCount": 0,
+    "LastUpdate": 0,
+    "IconUrl": "https://raw.githubusercontent.com/FFXIV-CombatReborn/RebornAssets/main/IconAssets/GBR_Icon.png",
+    "Punchline": "Simplify Gathering and Fishing to the extreme."
+  }
+]

@@ -7,6 +7,8 @@ namespace GatherBuddy.AutoGather
     {
         public float                           MountUpDistance               { get; set; } = 15.0f;
         public float                           LandingDistance               { get; set; } = 6.0f;
+        public float                           PathSmoothingDensity          { get; set; } = 0.25f;
+        public int                             PathSmoothingMinSegments      { get; set; } = 2;
         public uint                            AutoGatherMountId             { get; set; } = 1;
         public bool MoveWhileMounting { get; set; } = false;
         public Dictionary<uint, List<Vector3>> BlacklistedNodesByTerritoryId { get; set; } = [];

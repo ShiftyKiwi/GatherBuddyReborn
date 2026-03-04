@@ -21,7 +21,7 @@ GatherBuddyReborn is a community-made fork of the original GatherBuddy plugin fo
 - **Skip below the DevPlugins section to the Custom Plugin Repositories section.**
 - Copy and paste the repo.json link into the first free text input field.
 ```
-https://raw.githubusercontent.com/FFXIV-CombatReborn/CombatRebornRepo/main/pluginmaster.json
+https://raw.githubusercontent.com/ShiftyKiwi/GatherBuddyReborn/main/pluginmaster.json
 ```
 - Click on the + button and make sure the checkmark beside the new field is set afterwards.
 - **Click on the Save-icon in the bottom right.**
