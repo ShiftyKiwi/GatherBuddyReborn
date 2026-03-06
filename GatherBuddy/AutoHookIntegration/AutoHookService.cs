@@ -33,6 +33,9 @@ public class AutoHookService
                 var exportString = AutoHookExporter.ExportPreset(preset);
                 GatherBuddy.Log.Debug($"[AutoHook Integration] Export string for '{preset.PresetName}' created, length: {exportString?.Length ?? 0}");
                 
+                if (string.IsNullOrEmpty(exportString))
+                    throw new InvalidOperationException($"Failed to export preset '{preset.PresetName}' to a valid string.");
+
                 AutoHook.ImportAndSelectPreset?.Invoke(exportString);
             }
             
@@ -77,6 +80,9 @@ public class AutoHookService
             var preset = AutoHookPresetBuilder.BuildPresetFromRecords(presetName, records);
             var exportString = AutoHookExporter.ExportPreset(preset);
             
+            if (string.IsNullOrEmpty(exportString))
+                throw new InvalidOperationException($"Failed to export preset '{presetName}' from records to a valid string.");
+
             AutoHook.ImportAndSelectPreset?.Invoke(exportString);
             
             GatherBuddy.Log.Information($"[AutoHook Integration] Successfully exported preset '{presetName}' to AutoHook from records");
@@ -136,6 +142,9 @@ public class AutoHookService
             var preset = AutoHookSpearfishingPresetBuilder.BuildSpearfishingPreset(presetName, fishList);
             var exportString = AutoHookSpearfishingExporter.ExportPreset(preset);
             
+            if (string.IsNullOrEmpty(exportString))
+                throw new InvalidOperationException($"Failed to export spearfishing preset '{presetName}' to a valid string.");
+
             AutoHook.ImportAndSelectPreset?.Invoke(exportString);
             
             GatherBuddy.Log.Information($"[AutoHook Integration] Successfully exported spearfishing preset '{presetName}' to AutoHook");

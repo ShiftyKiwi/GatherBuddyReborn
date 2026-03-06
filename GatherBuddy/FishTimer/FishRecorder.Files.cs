@@ -164,7 +164,7 @@ public partial class FishRecorder
                 }
                 catch (Exception e)
                 {
-                    GatherBuddy.Log.Error($"{name} was unable to be deserialized using V2 logic.");
+                    GatherBuddy.Log.Error($"{name} was unable to be deserialized using V2 logic.\n{e}");
                     return new List<FishRecord>();
                 }
             }

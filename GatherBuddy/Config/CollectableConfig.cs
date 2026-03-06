@@ -30,7 +30,7 @@ public class CollectableConfig
                 _preferredCollectableShop = CollectableNpcLocations.GetDefaultShop();
                 GatherBuddy.Log.Debug($"[CollectableConfig] Set to: {_preferredCollectableShop.Name} at {_preferredCollectableShop.Location}");
             }
-            return _preferredCollectableShop;
+            return _preferredCollectableShop!;
         }
         set => _preferredCollectableShop = value;
     }

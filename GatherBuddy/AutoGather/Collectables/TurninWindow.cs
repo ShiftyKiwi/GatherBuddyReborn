@@ -15,7 +15,7 @@ public unsafe class TurninWindow(AtkUnitBase* addon) : TreeListWindowBase(addon)
         return SeString.Parse(label).TextValue;
     }
 
-    public int GetItemIndexOf(string label)
+    public new int GetItemIndexOf(string label)
     {
         GatherBuddy.Log.Debug($"[TurninWindow] GetItemIndexOf searching for '{label}' in {Labels.Length} items");
         

@@ -63,7 +63,6 @@ public class CollectableManager : IDisposable
     private int _currentJobId = -1;
     private DateTime _lastAction = DateTime.MinValue;
     private TimeSpan _actionDelay = TimeSpan.FromMilliseconds(500);
-    private int _phaseCounter = 0;
     private DateTime _movementStartTime = DateTime.MinValue;
     private bool _teleportAttempted = false;
     private bool _lifestreamAttempted = false;
@@ -488,7 +487,6 @@ public class CollectableManager : IDisposable
             _windowHandler.SelectJob((uint)next.jobId);
             _currentJobId = next.jobId;
             _lastAction = DateTime.UtcNow;
-            _phaseCounter = 0;
         }
         
         _state = CollectableState.SelectingItem;

@@ -1625,8 +1625,6 @@ namespace GatherBuddy.AutoGather
                     
                     Vector3 newPos;
                     Angle newRotation = fishingSpotData.Rotation;
-                    bool foundPos = false;
-
                     var forwardDirection = new Vector3(
                         (float)Math.Sin(Player.Rotation),
                         0,
@@ -1639,7 +1637,6 @@ namespace GatherBuddy.AutoGather
                     if (meshPoint.HasValue)
                     {
                         newPos = meshPoint.Value;
-                        foundPos = true;
                         GatherBuddy.Log.Information($"[AutoGather] Moving {stepSize:F1}y forward in facing direction");
                     }
                     else

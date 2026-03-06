@@ -256,8 +256,11 @@ public class AutoHookPresetBuilder
 
         ConfigureExtraCfg(preset, actualBaitId);
         
-        preset.ExtraCfg.SwapPresetIntuitionGain = true;
-        preset.ExtraCfg.PresetToSwapIntuitionGain = targetPresetName;
+        if (preset.ExtraCfg != null)
+        {
+            preset.ExtraCfg.SwapPresetIntuitionGain = true;
+            preset.ExtraCfg.PresetToSwapIntuitionGain = targetPresetName;
+        }
         
         ConfigureAutoCasts(preset, predators.ToArray(), gbrPreset);
         
@@ -332,8 +335,11 @@ public class AutoHookPresetBuilder
 
         ConfigureExtraCfg(preset, actualBaitId);
         
-        preset.ExtraCfg.SwapPresetIntuitionLost = true;
-        preset.ExtraCfg.PresetToSwapIntuitionLost = predatorPresetName;
+        if (preset.ExtraCfg != null)
+        {
+            preset.ExtraCfg.SwapPresetIntuitionLost = true;
+            preset.ExtraCfg.PresetToSwapIntuitionLost = predatorPresetName;
+        }
         
         ConfigureAutoCasts(preset, targetFish, gbrPreset);
         
@@ -671,7 +677,7 @@ public class AutoHookPresetBuilder
             Enabled = true,
             SurfaceSlap = surfaceSlap,
             IdenticalCast = identicalCast,
-            Mooch = mooch,
+            Mooch = mooch ?? new AHAutoMooch(),
             NeverMooch = false
         };
 

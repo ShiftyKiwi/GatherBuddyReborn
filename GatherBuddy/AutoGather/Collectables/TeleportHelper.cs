@@ -21,11 +21,10 @@ public static class TeleportHelper
             foreach (var tpInfo in tpInfos)
             {
                 var aetheryteName = Dalamud.GameData.GetExcelSheet<Aetheryte>()
-                    .FirstOrDefault(x => x.RowId == tpInfo.AetheryteId).PlaceName.ValueNullable?.Name
-                    .ToString();
-                
-                var result = aetheryteName.Contains(name, StringComparison.OrdinalIgnoreCase);
-                if (!result && !aetheryteName.Contains(name, StringComparison.OrdinalIgnoreCase))
+                    .FirstOrDefault(x => x.RowId == tpInfo.AetheryteId)
+                    .PlaceName.ValueNullable?.Name.ToString();
+
+                if (string.IsNullOrEmpty(aetheryteName) || !aetheryteName.Contains(name, StringComparison.OrdinalIgnoreCase))
                     continue;
                 info = tpInfo;
                 aetherName = aetheryteName;
